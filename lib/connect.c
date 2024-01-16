@@ -158,6 +158,7 @@ void Curl_persistconninfo(struct Curl_easy *data, struct connectdata *conn,
   data->info.conn_primary_port = conn->port;
   data->info.conn_remote_port = conn->remote_port;
   data->info.conn_local_port = local_port;
+  data->info.was_proxy = conn->bits.proxy;
 }
 
 static const struct Curl_addrinfo *
