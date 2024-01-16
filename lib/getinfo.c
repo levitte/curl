@@ -334,7 +334,13 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
     *param_longp = data->info.conn_protocol;
     break;
   case CURLINFO_WAS_PROXY:
-    *param_longp = data->info.was_proxy;
+    *param_longp =
+#ifdef CURL_DISABLE_PROXY
+      0
+#else
+      data->info.was_proxy
+#endif
+      ;
     break;
   default:
     return CURLE_UNKNOWN_OPTION;
