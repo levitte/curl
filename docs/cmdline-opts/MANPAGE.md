@@ -9,24 +9,38 @@
 This is the curl man page generator. It generates a single nroff man page
 output from the set of sources files in this directory.
 
-There is one source file for each supported command line option. The output
-gets `page-header` prepended and `page-footer` appended. The format is
-described below.
+The `mainpage.idx` file lists all files that are rendered in that order to
+produce the output. The magic `%options` keyword inserts all command line
+options documented.
+
+The `%options` documentation is created with one source file for each
+supported command line option.
+
+The documentation file format is described below. It is meant to look similar
+to markdown which is why it uses `.md` file extensions.
 
 ## Option files
 
 Each command line option is described in a file named `<long name>.d`, where
 option name is written without any prefixing dashes. Like the file name for
-the -v, --verbose option is named `verbose.d`.
+the `-v, --verbose` option is named `verbose.d`.
 
-Each file has a set of meta-data and a body of text.
+Each file has a set of meta-data in the top of the file, followed by a body of
+text.
+
+The documentation files that do not document options have no meta-data part.
+
+A line that starts with `<!--` is a comment. It should also end with `-->`.
 
 ### Meta-data
 
+    --- (start of meta-data)
     Added: (version number in which this was added)
     Arg: (the argument the option takes)
     c: (copyright line)
-    Example: (example command line, without "curl" and can use `$URL`)
+    Example:
+      - (an example command line, without "curl" and can use `$URL`)
+      - (another example)
     Experimental: yes (if so)
     Help: (short text for the --help output for this option)
     Long: (long form name, without dashes)
@@ -36,7 +50,9 @@ Each file has a set of meta-data and a body of text.
     Protocols: (space separated list for which protocols this option works)
     Requires: (space separated list of features this requires, no dashes)
     Scope: global (if the option is global)
-    See-also: (space separated list of related options, no dashes)
+    See-also:
+      - (a related option, no dashes)
+      - (another related option, no dashes)
     Short: (single letter, without dash)
     SPDX-License-Identifier: curl
     Tags: (space separated list)
@@ -67,12 +83,7 @@ explicitly with an empty "header":
 
     ##
 
-## Header and footer
-
-`page-header` is the file that is output before the generated options output
-for the master man page.
-
-`page-footer` is appended after all the individual options.
+Non-option files can also use the `#` header, which produces a `.SH` output.
 
 ## Generate
 
