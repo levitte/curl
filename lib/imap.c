@@ -1474,7 +1474,6 @@ static CURLcode imap_connect(struct Curl_easy *data, bool *done)
   Curl_dyn_init(&imapc->dyn, DYN_IMAP_CMD);
   /* Initialise the pingpong layer */
   Curl_pp_setup(pp);
-  Curl_pp_init(data, pp);
 
   /* Parse the URL options */
   result = imap_parse_url_options(conn);
@@ -1634,7 +1633,13 @@ static CURLcode imap_perform(struct Curl_easy *data, bool *connected,
 static CURLcode imap_do(struct Curl_easy *data, bool *done)
 {
   CURLcode result = CURLE_OK;
+  struct imap_conn *imapc = &data->conn->proto.imapc;
+  struct pingpong *pp = &imapc->pp;
   *done = FALSE; /* default to false */
+
+  /* init pingpong data. Done here and not in *_connect to make sure it gets
+     done even when the connection is reused */
+  Curl_pp_init(data, pp);
 
   /* Parse the URL path */
   result = imap_parse_url_path(data);

@@ -1131,7 +1131,6 @@ static CURLcode pop3_connect(struct Curl_easy *data, bool *done)
 
   /* Initialise the pingpong layer */
   Curl_pp_setup(pp);
-  Curl_pp_init(data, pp);
 
   /* Parse the URL options */
   result = pop3_parse_url_options(conn);
@@ -1231,7 +1230,13 @@ static CURLcode pop3_perform(struct Curl_easy *data, bool *connected,
 static CURLcode pop3_do(struct Curl_easy *data, bool *done)
 {
   CURLcode result = CURLE_OK;
+  struct pop3_conn *pop3c = &data->conn->proto.pop3c;
+  struct pingpong *pp = &pop3c->pp;
   *done = FALSE; /* default to false */
+
+  /* init pingpong data. Done here and not in *_connect to make sure it gets
+     done even when the connection is reused */
+  Curl_pp_init(data, pp);
 
   /* Parse the URL path */
   result = pop3_parse_url_path(data);

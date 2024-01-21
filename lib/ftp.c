@@ -3192,7 +3192,6 @@ static CURLcode ftp_connect(struct Curl_easy *data,
   }
 
   Curl_pp_setup(pp); /* once per transfer */
-  Curl_pp_init(data, pp); /* init the generic pingpong data */
 
   /* When we connect, we start in the state where we await the 220
      response */
@@ -3997,6 +3996,11 @@ static CURLcode ftp_do(struct Curl_easy *data, bool *done)
   CURLcode result = CURLE_OK;
   struct connectdata *conn = data->conn;
   struct ftp_conn *ftpc = &conn->proto.ftpc;
+  struct pingpong *pp = &ftpc->pp;
+
+  /* init pingpong data. Done here and not in *_connect to make sure it gets
+     done even when the connection is reused */
+  Curl_pp_init(data, pp);
 
   *done = FALSE; /* default to false */
   ftpc->wait_data_conn = FALSE; /* default to no such wait */

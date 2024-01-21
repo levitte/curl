@@ -1362,7 +1362,6 @@ static CURLcode smtp_connect(struct Curl_easy *data, bool *done)
 
   /* Initialise the pingpong layer */
   Curl_pp_setup(pp);
-  Curl_pp_init(data, pp);
 
   /* Parse the URL options */
   result = smtp_parse_url_options(conn);
@@ -1540,7 +1539,15 @@ static CURLcode smtp_perform(struct Curl_easy *data, bool *connected,
 static CURLcode smtp_do(struct Curl_easy *data, bool *done)
 {
   CURLcode result = CURLE_OK;
+  struct pingpong *pp;
+  DEBUGASSERT(data);
+  DEBUGASSERT(data->conn);
+  pp = &data->conn->proto.smtpc.pp;
   *done = FALSE; /* default to false */
+
+  /* init pingpong data. Done here and not in *_connect to make sure it gets
+     done even when the connection is reused */
+  Curl_pp_init(data, pp);
 
   /* Parse the custom request */
   result = smtp_parse_custom_request(data);
